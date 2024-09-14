@@ -1,0 +1,11 @@
+<p>Hello {{ user.email }},</p>
+
+<p>Thank you for registering. Please click the link below to verify your email address:</p>
+
+<p>
+    <a href="http://{{ domain }}{% url 'activate' uidb64=uidb64 token=token %}">
+        Verify your email address
+    </a>
+</p>
+
+<p>If you didn’t register, you can safely ignore this email.</p>

@@ -145,3 +145,20 @@ AUTH_USER_MODEL = 'user.CustomUser'
 # settings.py
 AUTHENTICATION_BACKENDS = ['user.backends.EmailBackend']
 LOGIN_REDIRECT_URL = '/'
+
+
+# Email settings for SMTP (replace with your actual credentials)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # or your email provider's SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = '7050592@gmail.com.com'
+EMAIL_HOST_PASSWORD = '2020.Sonic'
+
+# If using a service like SendGrid:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'apikey'
+# EMAIL_HOST_PASSWORD = 'your_sendgrid_api_key'
