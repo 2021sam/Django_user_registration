@@ -145,7 +145,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user.CustomUser'
 # settings.py
-AUTHENTICATION_BACKENDS = ['user.backends.EmailBackend']
+# AUTHENTICATION_BACKENDS = ['user.backends.EmailBackend']
+
+AUTHENTICATION_BACKENDS = [
+    'user.backends.EmailBackend',  # Custom email backend
+    'django.contrib.auth.backends.ModelBackend',  # Default model backend
+]
+
+
 # LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
 LOGOUT_REDIRECT_URL = 'login'  # Where to redirect after logout
