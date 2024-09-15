@@ -28,18 +28,67 @@ def home(request):
 # from django.contrib.sites.shortcuts import get_current_site
 # from .models import CustomUser
 
+# def send_verification_email(request, user):
+#     token = default_token_generator.make_token(user)
+#     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))  # Correct the name to uidb64
+#     current_site = get_current_site(request)
+#     subject = 'Verify Your Email Address'
+#     message = render_to_string('user/verify_email.html', {
+#         'user': user,
+#         'domain': current_site.domain,
+#         'uidb64': uidb64,  # Make sure it's uidb64 here as well
+#         'token': token,
+#     })
+#     send_mail(subject, message, 'no-reply@yourdomain.com', [user.email])
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from .models import CustomUser
+
 def send_verification_email(request, user):
+    # Generate token and uid for the verification link
     token = default_token_generator.make_token(user)
-    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))  # Correct the name to uidb64
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    
+    # Get the current site for the email link
     current_site = get_current_site(request)
-    subject = 'Verify Your Email Address'
-    message = render_to_string('user/verify_email.html', {
+    
+    # Render the email template with the verification link
+    html_content = render_to_string('user/verify_email.html', {
         'user': user,
         'domain': current_site.domain,
-        'uidb64': uidb64,  # Make sure it's uidb64 here as well
+        'uidb64': uidb64,
         'token': token,
     })
-    send_mail(subject, message, 'no-reply@yourdomain.com', [user.email])
+    
+    # Strip the HTML tags to create a plain text version
+    text_content = strip_tags(html_content)
+    
+    # Set up the email
+    subject = 'Verify Your Email Address'
+    from_email = 'no-reply@yzyxe.biz'
+    to_email = user.email
+    email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+    
+    # Attach the HTML version
+    email.attach_alternative(html_content, "text/html")
+    
+    # Send the email
+    email.send()
+
+
+
+
+
+
+
+
+
 
 def sign_up(request):
     if request.method == 'POST':

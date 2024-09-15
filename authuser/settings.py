@@ -147,14 +147,13 @@ AUTHENTICATION_BACKENDS = ['user.backends.EmailBackend']
 LOGIN_REDIRECT_URL = '/'
 
 
-# # Production
-# # Email settings for SMTP (replace with your actual credentials)
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'  # or your email provider's SMTP server
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = '2020sentinel@gmail.com.com'
-# EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465  # Use 465 for SSL, 587 for TLS
+EMAIL_USE_TLS = False  # Use TLS
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = '2020sentinel@gmail.com'
+EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
 
 # If using a service like SendGrid:
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -165,12 +164,23 @@ LOGIN_REDIRECT_URL = '/'
 # EMAIL_HOST_PASSWORD = 'your_sendgrid_api_key'
 
 
-#   Development - non production
-# Example for using Gmail SMTP:
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587  # Use 465 for SSL or 587 for TLS
-EMAIL_USE_TLS = False  # Disable TLS to bypass SSL verification
-EMAIL_USE_SSL = False  # Disable SSL if using port 465
-EMAIL_HOST_USER = '2020sentinel@gmail.com.com'
-EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
+# #   Development - non production
+# # Example for using Gmail SMTP:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587  # Use 465 for SSL or 587 for TLS
+# EMAIL_USE_TLS = True  # Disable TLS to bypass SSL verification
+# EMAIL_USE_SSL = False  # Disable SSL if using port 465
+# EMAIL_HOST_USER = '2020sentinel@gmail.com.com'
+# EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
+
+
+
+# # Gmail SMTP configuration
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587  # Use 587 for TLS, 465 for SSL
+# EMAIL_USE_TLS = True  # Use TLS
+# EMAIL_USE_SSL = False  # Don't use SSL with port 587
+# EMAIL_HOST_USER = 'your-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your-password-or-app-password'
