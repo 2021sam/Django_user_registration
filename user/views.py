@@ -51,6 +51,8 @@ from django.contrib.auth.tokens import default_token_generator
 from .models import CustomUser
 
 
+
+
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
@@ -62,29 +64,70 @@ def custom_login(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            
+
             # Authenticate the user using the custom backend
             user = authenticate(request, username=username, password=password)
-            
+
             if user is not None:
                 if user.is_active:
-                    # If user is active, log them in and redirect to the home page
+                    # If user is active, log them in
                     login(request, user)
-                    return redirect('home')  # Adjust 'home' to your actual home page URL
+                    return redirect('home')  # Redirect to the home page
                 else:
-                    # If user is inactive, redirect to the resend verification page
+                    # If user is inactive, redirect to resend verification
                     messages.warning(request, 'Your account is inactive. Please verify your email.')
-                    return redirect('resend_verification')  # Redirect to the verification page
+                    return redirect('resend_verification')  # Redirect to verification page
             else:
-                # If authentication failed
+                # If authentication fails
                 messages.error(request, 'Invalid username or password.')
         else:
             # If the form is invalid
-            messages.error(request, 'Please correct the errors below.')
+            messages.error(request, 'Please correct the error below.')
     else:
         form = AuthenticationForm()
 
     return render(request, 'registration/login.html', {'form': form})
+
+
+
+
+
+
+
+# from django.contrib.auth import authenticate, login
+# from django.shortcuts import render, redirect
+# from django.contrib.auth.forms import AuthenticationForm
+# from django.contrib import messages
+
+# def custom_login(request):
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request, data=request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data.get('username')
+#             password = form.cleaned_data.get('password')
+            
+#             # Authenticate the user using the custom backend
+#             user = authenticate(request, username=username, password=password)
+            
+#             if user is not None:
+#                 if user.is_active:
+#                     # If user is active, log them in and redirect to the home page
+#                     login(request, user)
+#                     return redirect('home')  # Adjust 'home' to your actual home page URL
+#                 else:
+#                     # If user is inactive, redirect to the resend verification page
+#                     messages.warning(request, 'Your account is inactive. Please verify your email.')
+#                     return redirect('resend_verification')  # Redirect to the verification page
+#             else:
+#                 # If authentication failed
+#                 messages.error(request, 'Invalid username or password.')
+#         else:
+#             # If the form is invalid
+#             messages.error(request, 'Please correct the errors below.')
+#     else:
+#         form = AuthenticationForm()
+
+#     return render(request, 'registration/login.html', {'form': form})
 
 
 
