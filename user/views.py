@@ -52,7 +52,6 @@ from .models import CustomUser
 
 
 
-
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
@@ -72,17 +71,17 @@ def custom_login(request):
                 if user.is_active:
                     # If user is active, log them in
                     login(request, user)
-                    return redirect('home')  # Redirect to the home page
+                    return redirect('home')  # Redirect to home page
                 else:
-                    # If user is inactive, redirect to resend verification
+                    # If user is inactive, redirect to resend verification page
                     messages.warning(request, 'Your account is inactive. Please verify your email.')
-                    return redirect('resend_verification')  # Redirect to verification page
+                    return redirect('resend_verification')  # Redirect to the verification page
             else:
                 # If authentication fails
-                messages.error(request, 'Invalid username or password.')
+                messages.error(request, 'Invalid email or password.')
         else:
             # If the form is invalid
-            messages.error(request, 'Please correct the error below.')
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = AuthenticationForm()
 
