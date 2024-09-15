@@ -83,6 +83,30 @@ def send_verification_email(request, user):
 
 
 
+from django.shortcuts import redirect, render
+from django.contrib import messages
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from .models import CustomUser
+
+def resend_verification_email(request):
+    # Check if the user is authenticated
+    if not request.user.is_authenticated:
+        messages.error(request, 'You need to be logged in to resend the verification email.')
+        return redirect('login')
+
+    user = request.user
+    # Check if the user is already active
+    if user.is_active:
+        messages.info(request, 'Your account is already activated.')
+        return redirect('home')
+
+    # Send the verification email
+    send_verification_email(request, user)
+    messages.success(request, 'A new verification email has been sent to your email address.')
+    return redirect('home')
 
 
 

@@ -14,5 +14,13 @@
     </form>
 
     <p>Don't have an account? <a href="{% url 'register' %}">Register here</a>.</p>
+
+
+    {% if user.is_authenticated and not user.is_active %}
+        <p>Didn't receive the verification email?</p>
+        <a href="{% url 'resend_verification' %}">Resend Verification Email</a>
+    {% endif %}
+
+
 </body>
 </html>

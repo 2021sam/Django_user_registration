@@ -48,7 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'user.middleware.EmailVerificationMiddleware',  # Add the custom middleware
 ]
+
 
 ROOT_URLCONF = 'authuser.urls'
 
@@ -184,3 +186,27 @@ EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
 # EMAIL_USE_SSL = False  # Don't use SSL with port 587
 # EMAIL_HOST_USER = 'your-email@gmail.com'
 # EMAIL_HOST_PASSWORD = 'your-password-or-app-password'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        '__main__': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'user.middleware': {  # Enable logging for your custom middleware
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
