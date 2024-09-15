@@ -5,7 +5,7 @@
     <title>Login</title>
 </head>
 <body>
-    <h2>Login</h2>
+    <h2>Login - templates/registration/login.html</h2>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
@@ -14,7 +14,7 @@
     </form>
 
     {% if messages %}
-        <ul>
+        <ul>. !
             {% for message in messages %}
                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}

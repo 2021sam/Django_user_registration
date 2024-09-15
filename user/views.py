@@ -52,15 +52,28 @@ from .models import CustomUser
 
 
 
+
+
+
+
+
+import logging
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 
+logger = logging.getLogger(__name__)
+
 def custom_login(request):
+    logger.debug("Login view accessed")
+
     if request.method == 'POST':
+        logger.debug("POST request received")
         form = AuthenticationForm(request, data=request.POST)
+
         if form.is_valid():
+            logger.debug("Login form is valid")
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
 
@@ -68,24 +81,69 @@ def custom_login(request):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
+                logger.debug(f"User {user.email} found")
+
                 if user.is_active:
-                    # If user is active, log them in
+                    logger.debug(f"User {user.email} is active. Logging in.")
                     login(request, user)
-                    return redirect('home')  # Redirect to home page
+                    return redirect('home')  # Redirect to the home page
                 else:
-                    # If user is inactive, redirect to resend verification page
+                    logger.debug(f"User {user.email} is inactive. Redirecting to resend verification.")
                     messages.warning(request, 'Your account is inactive. Please verify your email.')
                     return redirect('resend_verification')  # Redirect to the verification page
             else:
-                # If authentication fails
+                logger.debug(f"Authentication failed for {username}")
                 messages.error(request, 'Invalid email or password.')
         else:
-            # If the form is invalid
+            logger.debug("Login form is invalid")
+            logger.debug(f"Form errors: {form.errors}")
             messages.error(request, 'Please correct the errors below.')
     else:
+        logger.debug("GET request received, rendering login form")
         form = AuthenticationForm()
 
     return render(request, 'registration/login.html', {'form': form})
+
+
+
+
+
+
+
+# from django.contrib.auth import authenticate, login
+# from django.shortcuts import render, redirect
+# from django.contrib.auth.forms import AuthenticationForm
+# from django.contrib import messages
+
+# def custom_login(request):
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request, data=request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data.get('username')
+#             password = form.cleaned_data.get('password')
+
+#             # Authenticate the user using the custom backend
+#             user = authenticate(request, username=username, password=password)
+
+#             if user is not None:
+#                 if user.is_active:
+#                     # If user is active, log them in
+#                     login(request, user)
+#                     return redirect('home')  # Redirect to home page
+#                 else:
+#                     # If user is inactive, redirect to resend verification page
+#                     messages.warning(request, 'Your account is inactive. Please verify your email.')
+#                     return redirect('resend_verification')  # Redirect to the verification page
+#             else:
+#                 # If authentication fails
+#                 messages.error(request, 'Invalid email or password.')
+#         else:
+#             # If the form is invalid
+#             messages.error(request, 'Please correct the errors below.')
+#     else:
+#         form = AuthenticationForm()
+
+#     return render(request, 'registration/login.html', {'form': form})
 
 
 
