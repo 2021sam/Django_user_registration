@@ -146,7 +146,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user.CustomUser'
 # settings.py
 AUTHENTICATION_BACKENDS = ['user.backends.EmailBackend']
-LOGIN_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
+LOGOUT_REDIRECT_URL = 'login'  # Where to redirect after logout
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

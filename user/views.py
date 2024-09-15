@@ -50,6 +50,44 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import default_token_generator
 from .models import CustomUser
 
+
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import messages
+
+def custom_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('home')  # Redirect to the home page
+                else:
+                    messages.warning(request, 'Your account is inactive. Please verify your email.')
+                    return redirect('resend_verification')  # Redirect to resend verification page
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'registration/login.html', {'form': form})
+
+
+
+
+
 def send_verification_email(request, user):
     # Generate token and uid for the verification link
     token = default_token_generator.make_token(user)
@@ -83,30 +121,22 @@ def send_verification_email(request, user):
 
 
 
-from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.auth.tokens import default_token_generator
 from .models import CustomUser
 
+@login_required
 def resend_verification_email(request):
-    # Check if the user is authenticated
-    if not request.user.is_authenticated:
-        messages.error(request, 'You need to be logged in to resend the verification email.')
-        return redirect('login')
-
     user = request.user
-    # Check if the user is already active
-    if user.is_active:
-        messages.info(request, 'Your account is already activated.')
+    if not user.is_active:
+        # Call the function that sends the verification email
+        send_verification_email(request, user)
+        messages.success(request, 'A new verification email has been sent.')
+        return redirect('home')  # Redirect to home or another page
+    else:
+        messages.info(request, 'Your account is already verified.')
         return redirect('home')
-
-    # Send the verification email
-    send_verification_email(request, user)
-    messages.success(request, 'A new verification email has been sent to your email address.')
-    return redirect('home')
 
 
 
