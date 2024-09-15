@@ -60,17 +60,18 @@ from .models import CustomUser
 import logging
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
+# from django.contrib.auth.forms import AuthenticationForm
+from .forms import CustomAuthenticationForm
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
 
 def custom_login(request):
     logger.debug("Login view accessed")
-
     if request.method == 'POST':
         logger.debug("POST request received")
-        form = AuthenticationForm(request, data=request.POST)
+        # form = AuthenticationForm(request, data=request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST)
 
         if form.is_valid():
             logger.debug("Login form is valid")
@@ -89,6 +90,8 @@ def custom_login(request):
                     return redirect('home')  # Redirect to the home page
                 else:
                     logger.debug(f"User {user.email} is inactive. Redirecting to resend verification.")
+                    # Store the email in the session for use in resend_verification
+                    request.session['user_email'] = user.email
                     messages.warning(request, 'Your account is inactive. Please verify your email.')
                     return redirect('resend_verification')  # Redirect to the verification page
             else:
@@ -100,7 +103,7 @@ def custom_login(request):
             messages.error(request, 'Please correct the errors below.')
     else:
         logger.debug("GET request received, rendering login form")
-        form = AuthenticationForm()
+        form = CustomAuthenticationForm()
 
     return render(request, 'registration/login.html', {'form': form})
 
@@ -255,22 +258,61 @@ def send_verification_email(request, user):
 
 
 
+
+
+
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.contrib import messages
 from .models import CustomUser
 
-@login_required
+# No need for login_required since we're handling inactive users
 def resend_verification_email(request):
-    user = request.user
-    if not user.is_active:
-        # Call the function that sends the verification email
-        send_verification_email(request, user)
-        messages.success(request, 'A new verification email has been sent.')
-        return redirect('home')  # Redirect to home or another page
+    # Get the user's email from the session
+    user_email = request.session.get('user_email', None)
+
+    if user_email:
+        try:
+            # Fetch the user from the database using the email
+            user = CustomUser.objects.get(email=user_email)
+            if not user.is_active:
+                # Logic to send the verification email
+                send_verification_email(request, user)
+                messages.success(request, 'A new verification email has been sent to your email address.')
+                return redirect('home')  # Redirect to home after sending the email
+            else:
+                messages.info(request, 'Your account is already verified.')
+                return redirect('home')
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'User does not exist.')
+            return redirect('login')
     else:
-        messages.info(request, 'Your account is already verified.')
-        return redirect('home')
+        return redirect('login')  # If the session does not have the email, redirect to login
+
+
+
+
+
+
+
+
+
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render, redirect
+# from django.contrib import messages
+# from .models import CustomUser
+
+# # @login_required
+# def resend_verification_email(request):
+#     user = request.user
+#     if not user.is_active:
+#         # Call the function that sends the verification email
+#         send_verification_email(request, user)
+#         messages.success(request, 'A new verification email has been sent.')
+#         return redirect('home')  # Redirect to home or another page
+#     else:
+#         messages.info(request, 'Your account is already verified.')
+#         return redirect('home')
 
 
 

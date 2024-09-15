@@ -16,3 +16,13 @@ class RegisterForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        # Do not raise ValidationError here for inactive users
+        # Let the view handle it
+        pass
