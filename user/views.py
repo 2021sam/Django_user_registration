@@ -93,7 +93,8 @@ def custom_login(request):
                     # Store the email in the session for use in resend_verification
                     request.session['user_email'] = user.email
                     messages.warning(request, 'Your account is inactive. Please verify your email.')
-                    return redirect('resend_verification')  # Redirect to the verification page
+                    # return redirect('resend_verification')  # Redirect to the verification page
+                    return redirect("verify_account")  # # Redirect to the verification page
             else:
                 logger.debug(f"Authentication failed for {username}")
                 messages.error(request, 'Invalid email or password.')
@@ -292,6 +293,33 @@ def resend_verification_email(request):
 
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import CustomUser
+
+def verify_account(request):
+    user_email = request.session.get('user_email', None)
+
+    if not user_email:
+        # If no email is in the session, redirect to login
+        return redirect('login')
+
+    if request.method == 'POST':
+        try:
+            user = CustomUser.objects.get(email=user_email)
+            if not user.is_active:
+                # Send the verification email
+                send_verification_email(request, user)
+                messages.success(request, 'A new verification email has been sent to your email address.')
+                return redirect('login')  # Redirect to login after sending the email
+            else:
+                messages.info(request, 'Your account is already verified.')
+                return redirect('home')
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'User does not exist.')
+            return redirect('login')
+
+    return render(request, 'registration/verify_account.html')
 
 
 
