@@ -226,37 +226,74 @@ def custom_login(request):
 
 
 
-def send_verification_email(request, user):
-    # Generate token and uid for the verification link
-    token = default_token_generator.make_token(user)
-    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+# def send_verification_email(request, user):
+#     # Generate token and uid for the verification link
+#     token = default_token_generator.make_token(user)
+#     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     
-    # Get the current site for the email link
-    current_site = get_current_site(request)
+#     # Get the current site for the email link
+#     current_site = get_current_site(request)
     
-    # Render the email template with the verification link
-    html_content = render_to_string('user/verify_email.html', {
-        'user': user,
-        'domain': current_site.domain,
-        'uidb64': uidb64,
-        'token': token,
-    })
+#     # Render the email template with the verification link
+#     html_content = render_to_string('emails/new_verification_email.html', {
+#         'user': user,
+#         'verification_url': verification_url,
+#         'domain': current_site.domain,
+#         'uidb64': uidb64,
+#         'token': token,
+#     })
     
-    # Strip the HTML tags to create a plain text version
-    text_content = strip_tags(html_content)
+#     # Strip the HTML tags to create a plain text version
+#     text_content = strip_tags(html_content)
     
-    # Set up the email
-    subject = 'Verify Your Email Address'
-    from_email = 'no-reply@yzyxe.biz'
-    to_email = user.email
-    email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+#     # Set up the email
+#     subject = 'Verify Your Email Address'
+#     from_email = 'no-reply@yzyxe.biz'
+#     to_email = user.email
+#     email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
     
-    # Attach the HTML version
-    email.attach_alternative(html_content, "text/html")
+#     # Attach the HTML version
+#     email.attach_alternative(html_content, "text/html")
     
-    # Send the email
-    email.send()
+#     # Send the email
+#     email.send()
 
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
+def send_verification_email(request, user):
+    # Generate token and UID
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+    # Build the absolute URL for email verification
+    verification_url = request.build_absolute_uri(
+        f"/user/activate/{uid}/{token}/"
+    )
+
+    # Render the email using the new HTML template
+    subject = 'Verify your email address'
+    message = render_to_string('emails/new_verification_email.html', {
+        'user': user,
+        'verification_url': verification_url,
+    })
+
+    # Create the email
+    email = EmailMessage(
+        subject,
+        message,
+        'no-reply@zyxe.biz',  # Replace with your email
+        [user.email],
+    )
+    
+    # Ensure email is sent as HTML
+    email.content_subtype = "html"
+
+    # Send the email
+    email.send(fail_silently=False)
 
 
 
