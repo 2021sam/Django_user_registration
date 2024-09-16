@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Website</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                {% if user.is_authenticated %}
+                    <!-- Show profile icon with user name -->
+                    <li>
+                        <a href="{% url 'profile' %}">
+                            <img src="{% static 'images/profile-icon.png' %}" alt="Profile" width="30" height="30">
+                            {{ user.email }} <!-- Show user's email or name -->
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <!-- Show login and register buttons if user is not logged in -->
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Content goes here -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

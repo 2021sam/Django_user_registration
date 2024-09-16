@@ -18,6 +18,16 @@ def home(request):
 
 
 
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profile(request):
+    return render(request, 'user/profile.html')
+
+
+
 # from django.shortcuts import render, redirect
 # from django.contrib import messages
 # from django.contrib.auth.tokens import default_token_generator
