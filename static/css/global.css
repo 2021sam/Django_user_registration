@@ -1,0 +1,27 @@
+Example global CSS
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #35424a;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+}
+
+nav a {
+    margin: 0 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #35424a;
+    color: #fff;
+    margin-top: 20px;
+}

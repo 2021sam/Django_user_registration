@@ -1,3 +1,4 @@
+# /Users/2021sam/apps/authuser/authuser/urls.py
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.urls import path, include
