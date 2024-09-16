@@ -153,8 +153,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-# LOGIN_REDIRECT_URL = '/'
-LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
+LOGIN_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
 LOGOUT_REDIRECT_URL = 'login'  # Where to redirect after logout
 
 
@@ -165,37 +165,6 @@ EMAIL_USE_TLS = False  # Use TLS
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = '2020sentinel@gmail.com'
 EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
-
-# If using a service like SendGrid:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.sendgrid.net'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'apikey'
-# EMAIL_HOST_PASSWORD = 'your_sendgrid_api_key'
-
-
-# #   Development - non production
-# # Example for using Gmail SMTP:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587  # Use 465 for SSL or 587 for TLS
-# EMAIL_USE_TLS = True  # Disable TLS to bypass SSL verification
-# EMAIL_USE_SSL = False  # Disable SSL if using port 465
-# EMAIL_HOST_USER = '2020sentinel@gmail.com.com'
-# EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
-
-
-
-# # Gmail SMTP configuration
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587  # Use 587 for TLS, 465 for SSL
-# EMAIL_USE_TLS = True  # Use TLS
-# EMAIL_USE_SSL = False  # Don't use SSL with port 587
-# EMAIL_HOST_USER = 'your-email@gmail.com'
-# EMAIL_HOST_PASSWORD = 'your-password-or-app-password'
-
 
 
 LOGGING = {
@@ -218,3 +187,9 @@ LOGGING = {
         },
     },
 }
+
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Store sessions in the database
+SESSION_COOKIE_AGE = 1209600  # 2 weeks (default)
+SESSION_SAVE_EVERY_REQUEST = True  # Save the session to the database on every request
