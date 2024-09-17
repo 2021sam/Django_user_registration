@@ -16,7 +16,7 @@
                     <!-- Show profile icon with user name -->
                     <li>
                         <a href="{% url 'profile' %}">
-                            <img src="{% static 'images/profile-icon.png' %}" alt="Profile" width="300" height="300">
+                            <img src="{% static 'images/profile-icon.png' %}" alt="Profile" width="30" height="30">
                             {{ user.email }} <!-- Show user's email or name -->
                         </a>
                     </li>
@@ -36,7 +36,6 @@
     <main>
         {% block content %}
         {% endblock %}
-        <img src="{% static 'images/profile-icon.png' %}" alt="Profile" width="300" height="300">
     </main>
 
     <footer>
