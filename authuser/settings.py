@@ -140,7 +140,7 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_REDIRECT_URL = '/'
 # LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
-LOGOUT_REDIRECT_URL = 'login'  # Where to redirect after logout
+LOGOUT_REDIRECT_URL = '/'  # Where to redirect after logout
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

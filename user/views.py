@@ -483,3 +483,11 @@ def activate(request, uidb64, token):
 #         else:
 #             messages.error(request, 'Please correct the errors below.')
 #             return render(request, 'user/register.html', {'form': form})
+
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def custom_logout(request):
+    logout(request)  # Logs the user out and clears the session
+    return redirect('home')  # Redirects to home
