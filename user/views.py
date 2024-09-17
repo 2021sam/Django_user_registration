@@ -21,11 +21,18 @@ logger = logging.getLogger(__name__)
 
 
 
+# def waiting_for_approval(request):
+#     user = request.user
+#     return render(request, 'registration/waiting_for_approval.html', {'user': user})
+
+
 def waiting_for_approval(request):
-    user = request.user
-    return render(request, 'registration/waiting_for_approval.html', {'user': user})
+    # If the user is logged in and active, redirect to the home page
+    if request.user.is_authenticated and request.user.is_active:
+        return redirect('home')
 
-
+    # Otherwise, display the waiting page
+    return render(request, 'registration/waiting_for_approval.html', {'user': request.user})
 
 
 
@@ -201,6 +208,7 @@ def activate(request, uidb64, token):
         messages.success(request, 'Your account has been activated successfully.')
 
         send_welcome_email(user)
+        login(request, user)
         
         return redirect('login')
     else:
