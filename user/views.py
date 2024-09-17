@@ -143,7 +143,7 @@ def resend_verification_email(request):
                 # Logic to send the verification email
                 send_verification_email(request, user)
                 messages.success(request, 'A new verification email has been sent to your email address.')
-                return redirect('home')  # Redirect to home after sending the email
+                return redirect('waiting_for_approval')  # Redirect to home after sending the email
             else:
                 messages.info(request, 'Your account is already verified.')
                 return redirect('home')
@@ -168,7 +168,7 @@ def verify_account(request):
                 # Send the verification email
                 send_verification_email(request, user)
                 messages.success(request, 'A new verification email has been sent to your email address.')
-                return redirect('login')  # Redirect to login after sending the email
+                return redirect('waiting_for_approval')  # Redirect to login after sending the email
             else:
                 messages.info(request, 'Your account is already verified.')
                 return redirect('home')
@@ -194,7 +194,7 @@ def sign_up(request):
 
     return render(request, 'user/register.html', {'form': form})
 
-
+from django.contrib.auth import get_backends
 def activate(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
@@ -205,15 +205,20 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        messages.success(request, 'Your account has been activated successfully.')
 
+        # Fetch the backend and pass it to the login function
+        backend = get_backends()[0]  # Assuming you want to use the first backend
+        user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
+
+        # Log the user in
+        login(request, user, backend=user.backend)
+        messages.success(request, 'Your account has been activated successfully.')
         send_welcome_email(user)
-        login(request, user)
-        
-        return redirect('login')
+        login(request, user)      
+        return redirect('home')
     else:
         messages.error(request, 'The activation link is invalid or has expired.')
-        return redirect('sign_up')
+        return redirect('waiting_for_approval')
 
 
 from django.core.mail import EmailMessage
