@@ -17,6 +17,21 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+
+
+
+
+def waiting_for_approval(request):
+    user = request.user
+    return render(request, 'registration/waiting_for_approval.html', {'user': user})
+
+
+
+
+
+
+
+
 # Home view
 def home(request):
     return render(request, 'home.html')
@@ -24,6 +39,10 @@ def home(request):
 @login_required
 def profile(request):
     return render(request, 'user/profile.html')
+
+
+
+
 
 
 from .forms import CustomAuthenticationForm
@@ -160,7 +179,7 @@ def sign_up(request):
             user = form.save()
             send_verification_email(request, user)
             messages.success(request, 'A verification email has been sent to your email address.')
-            return redirect('login')
+            return redirect('waiting_for_approval')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
