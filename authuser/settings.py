@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'user'
 ]
 
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'user.middleware.EmailVerificationMiddleware',  # Add the custom middleware
 ]
 
@@ -178,3 +180,18 @@ LOGGING = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Store sessions in the database
 SESSION_COOKIE_AGE = 1209600  # 2 weeks (default)
 SESSION_SAVE_EVERY_REQUEST = True  # Save the session to the database on every request
+
+
+# INSTALLED_APPS = [
+#     ...
+#     'corsheaders',
+# ]
+
+# MIDDLEWARE = [
+#     'corsheaders.middleware.CorsMiddleware',
+#     ...
+# ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",  # Or wherever your frontend is hosted
+]

@@ -9,7 +9,8 @@
         function checkVerification() {
             console.log("Checking verification status..."); // Log when the function is called
 
-            fetch("/user/check-verification-status/")  // Adjust to the correct endpoint
+            // fetch("/user/check-verification-status/")  // Adjust to the correct endpoint
+            fetch("http://localhost:8000/user/check-verification-status/")  // Full URL
             .then(response => {
                 console.log("Received response:", response);  // Log the response
 
