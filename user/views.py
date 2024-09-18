@@ -25,17 +25,26 @@ logger = logging.getLogger(__name__)
 #     user = request.user
 #     return render(request, 'registration/waiting_for_approval.html', {'user': user})
 
+# # @login_required
+# def waiting_for_approval(request):
+#     # If the user is logged in and active, redirect to the home page
+#     if request.user.is_authenticated and request.user.is_active:
+#         return redirect('home')
+
+#     # Otherwise, display the waiting page
+#     return render(request, 'registration/waiting_for_approval.html', {'user': request.user})
+
+
 
 def waiting_for_approval(request):
-    # If the user is logged in and active, redirect to the home page
-    if request.user.is_authenticated and request.user.is_active:
-        return redirect('home')
-
-    # Otherwise, display the waiting page
-    return render(request, 'registration/waiting_for_approval.html', {'user': request.user})
-
-
-
+    logger.info("waiting_for_approval")
+    user_email = request.session.get('user_email')  # Fetch email from session
+    logger.info(user_email)
+    if not user_email:
+        return redirect('login')  # Redirect to login if no email in session
+    user = CustomUser.objects.get(email=user_email)
+    logger.info(user)
+    return render(request, 'registration/waiting_for_approval.html', {'user': user})
 
 
 
@@ -250,3 +259,37 @@ from django.contrib.auth import logout
 def custom_logout(request):
     logout(request)  # Logs the user out and clears the session
     return redirect('home')  # Redirects to home
+
+
+
+
+from django.http import JsonResponse
+from .models import CustomUser
+
+def check_verification_status(request):
+    # Assuming the user is logged in or the user email is stored in the session
+    user_email = request.session.get('user_email', None)
+    logger.info('************************************')
+    logger.info('check_verification_status')
+    if user_email:
+        try:
+            user = CustomUser.objects.get(email=user_email)
+            # Return the verification status
+            return JsonResponse({'is_active': user.is_active})
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'is_active': False})
+    else:
+        return JsonResponse({'is_active': False})
+
+
+
+# from django.http import JsonResponse
+# from .models import CustomUser
+
+# def check_verification_status(request):
+#     if request.user.is_authenticated:
+#         # Check if the user is active
+#         is_active = request.user.is_active
+#         return JsonResponse({'is_active': is_active})
+#     else:
+#         return JsonResponse({'is_active': False})

@@ -2,6 +2,7 @@ from django.urls import path
 from .views import sign_up, activate, resend_verification_email
 from .views import custom_login, verify_account, waiting_for_approval
 from django.contrib.auth import views as auth_views
+from .views import check_verification_status
 
 
 urlpatterns = [
@@ -11,5 +12,6 @@ urlpatterns = [
     path('login/', custom_login, name='login'),
     path('verify-account/', verify_account, name='verify_account'),
     path('waiting-for-approval/', waiting_for_approval, name='waiting_for_approval'),
+    path('check-verification-status/', check_verification_status, name='check_verification_status'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),  # Make sure next_page redirects to 'home'
 ]
