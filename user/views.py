@@ -282,14 +282,18 @@ def check_verification_status(request):
         return JsonResponse({'is_active': False})
 
 
+# views.py (in the user app)
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
-# from django.http import JsonResponse
-# from .models import CustomUser
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        # Delete the authenticated user's account
+        user = request.user
+        user.delete()
+        messages.success(request, 'Your account has been deleted successfully.')
+        return redirect('home')  # Redirect to home or any other page after deletion
 
-# def check_verification_status(request):
-#     if request.user.is_authenticated:
-#         # Check if the user is active
-#         is_active = request.user.is_active
-#         return JsonResponse({'is_active': is_active})
-#     else:
-#         return JsonResponse({'is_active': False})
+    return render(request, 'registration/delete_account.html')
