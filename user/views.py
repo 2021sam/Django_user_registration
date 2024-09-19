@@ -296,4 +296,4 @@ def delete_account(request):
         messages.success(request, 'Your account has been deleted successfully.')
         return redirect('home')  # Redirect to home or any other page after deletion
 
-    return render(request, 'registration/delete_account.html')
+    return render(request, 'user/delete_account.html')
