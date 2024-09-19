@@ -16,26 +16,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
-
-
-
-
-# def waiting_for_approval(request):
-#     user = request.user
-#     return render(request, 'registration/waiting_for_approval.html', {'user': user})
-
-# # @login_required
-# def waiting_for_approval(request):
-#     # If the user is logged in and active, redirect to the home page
-#     if request.user.is_authenticated and request.user.is_active:
-#         return redirect('home')
-
-#     # Otherwise, display the waiting page
-#     return render(request, 'registration/waiting_for_approval.html', {'user': request.user})
-
-
-
 def waiting_for_approval(request):
     logger.info("waiting_for_approval")
     user_email = request.session.get('user_email')  # Fetch email from session
@@ -297,3 +277,31 @@ def delete_account(request):
         return redirect('home')  # Redirect to home or any other page after deletion
 
     return render(request, 'user/delete_account.html')
+
+
+# Add this to your views.py (or ensure you are using a context processor that provides it)
+from django.conf import settings
+
+def custom_password_reset_view(request):
+    context = {
+        'site_title': 'Your Site Title',  # Or dynamically get it from settings
+    }
+    # return render(request, 'registration/password_reset_form.html', context)
+    return render(request, 'password_reset_form.html', {'name': 'YourName'})
+
+
+
+from django.contrib.auth import views as auth_views
+from django.urls import path
+
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'registration/password_reset_done.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_title'] = 'Your Site Title'  # Add site_title to the context
+        return context
+
+urlpatterns = [
+    path('password_reset/done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
+]
