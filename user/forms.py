@@ -56,3 +56,9 @@ class ProfileForm(forms.ModelForm):
         if not mobile_number:
             raise forms.ValidationError("Mobile number is required for enabling 2FA.")
         return mobile_number
+
+
+from django import forms
+
+class TwoFactorForm(forms.Form):
+    code = forms.CharField(max_length=6, label='Enter 2FA Code')

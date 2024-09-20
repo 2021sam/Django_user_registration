@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import default_token_generator
 from .models import CustomUser
-from .forms import RegisterForm
+from .forms import RegisterForm, TwoFactorForm
 from django.contrib.auth.decorators import login_required
 import logging
 
@@ -25,8 +25,6 @@ def waiting_for_approval(request):
     user = CustomUser.objects.get(email=user_email)
     logger.info(user)
     return render(request, 'registration/waiting_for_approval.html', {'user': user})
-
-
 
 # Home view
 def home(request):
@@ -348,17 +346,20 @@ def disable_2fa(request):
 
 def send_2fa_code(user, code):
     carrier_email_domains = {
-        "Verizon": "@vtext.com",
-        "AT&T": "@txt.att.net",
-        "T-Mobile": "@tmomail.net",
-        # Add more carriers
+        "verizon": "@vtext.com",
+        "att": "@txt.att.net",
+        "tmobile": "@tmomail.net",
+        "sprint": "@messaging.sprintpcs.com",
     }
 
+    logger.info('******************** 3')
+    logger.info(user.mobile_carrier)
     if user.mobile_carrier in carrier_email_domains:
+        logger.info('******************** 4')
         sms_address = f"{user.mobile_number}{carrier_email_domains[user.mobile_carrier]}"
-        subject = 'Your 2FA Code'
+        subject = 'ZYXE 2FA Code'
         message = f'Your two-factor authentication code is {code}.'
-        send_mail(subject, message, 'your-email@example.com', [sms_address])
+        send_mail(subject, message, 'no-reply@zyxe.biz', [sms_address])
 
 
 
@@ -385,8 +386,56 @@ def profile_view(request):
 
 
 
+# @login_required
+# def request_2fa_approval(request):
+#     # Logic for requesting 2FA approval
+#     messages.success(request, 'Your request for 2FA approval has been submitted.')
+#     return redirect('profile')
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from django.contrib import messages
+from .models import CustomUser
+import random
+
 @login_required
 def request_2fa_approval(request):
-    # Logic for requesting 2FA approval
-    messages.success(request, 'Your request for 2FA approval has been submitted.')
+    user = request.user
+    logger.info('******************** 0')
+    # Ensure user has provided mobile number and carrier
+    if user.mobile_number and user.mobile_carrier:
+        # Generate a random 2FA code
+        code = random.randint(100000, 999999)
+        logger.info('******************** 1')
+        # Logic to handle 2FA request, simulate sending a 2FA code via SMS
+        send_2fa_code(user, code)
+        logger.info('******************** 2')
+        user.mobile_authenticated = True  # This can be used for the 2FA authenticated status
+        user.save()
+
+        messages.success(request, f"2FA approval requested. A code has been sent to {user.mobile_number}.")
+    else:
+        messages.error(request, "Please complete your profile with a mobile number and carrier to request 2FA approval.")
+    
     return redirect('profile')
+
+
+@login_required
+def verify_2fa_code(request):
+    if request.method == 'POST':
+        form = TwoFactorForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            # Compare with the 2FA code (this needs to be fetched or stored in session)
+            if code == request.user.two_factor_code:  # Adjust the logic
+                request.user.mobile_authenticated = True
+                request.user.save()
+                messages.success(request, '2FA setup successfully!')
+                return redirect('profile')
+            else:
+                messages.error(request, 'Invalid 2FA code.')
+    else:
+        form = TwoFactorForm()
+
+    return render(request, 'user/verify_2fa.html', {'form': form})
