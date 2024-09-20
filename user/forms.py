@@ -37,14 +37,19 @@ class CustomAuthenticationForm(AuthenticationForm):
         pass
 
 
-
 from django import forms
 from .models import CustomUser
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['mobile_number', 'mobile_carrier']
+        fields = ['email', 'mobile_number', 'mobile_carrier', 'mobile_authenticated']
+
+        widgets = {
+            'email': forms.EmailInput(attrs={'readonly': 'readonly'}),
+            'mobile_authenticated': forms.CheckboxInput(attrs={'disabled': 'disabled'}),
+        }
+
 
     def clean_mobile_number(self):
         mobile_number = self.cleaned_data.get('mobile_number')

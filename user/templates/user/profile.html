@@ -12,12 +12,6 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-
-
-    <!-- Disable email field by not rendering it -->
-    <p>Email: {{ user.email }}</p>
-    
-
     <button type="submit">Save Profile</button>
 </form>
 
@@ -29,11 +23,9 @@
 {% endif %}
 
 
-
 {% if user.mobile_number and user.mobile_carrier %}
-    {% if user.is_2fa_enabled %}
+    {% if user.mobile_authenticated %}
         <p>2FA is currently enabled.</p>
-        <a href="{% url 'disable_2fa' %}">Disable 2FA</a>
     {% else %}
         <a href="{% url 'enable_2fa' %}">Enable 2FA</a>
     {% endif %}
