@@ -44,7 +44,7 @@ from .models import CustomUser
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['email', 'mobile_number', 'mobile_carrier', 'mobile_authenticated']
+        fields = ['mobile_number', 'mobile_carrier']
 
     def clean_mobile_number(self):
         mobile_number = self.cleaned_data.get('mobile_number')

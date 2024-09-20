@@ -382,6 +382,3 @@ def profile_view(request):
         form = ProfileForm(instance=user)
 
     return render(request, 'user/profile.html', {'form': form, 'user': user})
-
-
-

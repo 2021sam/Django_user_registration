@@ -5,11 +5,30 @@
 <h2>User Profile</h2>
 <p>Welcome, {{ user.email }}! This is your profile page.</p>
 
+<p>Email: {{ user.email }}</p>  <!-- Display email without editing -->
+<p>2FA Status: {% if user.mobile_authenticated %}Enabled{% else %}Not Enabled{% endif %}</p>  <!-- Display 2FA status -->
+
+
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+
+
+    <!-- Disable email field by not rendering it -->
+    <p>Email: {{ user.email }}</p>
+    
+
     <button type="submit">Save Profile</button>
 </form>
+
+
+{% if user.mobile_number and user.mobile_carrier %}
+    <a href="{% url 'request_2fa_approval' %}" class="btn btn-primary">Request 2FA Approval</a>
+{% else %}
+    <p>Please provide a mobile number and carrier to enable 2FA.</p>
+{% endif %}
+
+
 
 {% if user.mobile_number and user.mobile_carrier %}
     {% if user.is_2fa_enabled %}
