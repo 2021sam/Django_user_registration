@@ -382,3 +382,11 @@ def profile_view(request):
         form = ProfileForm(instance=user)
 
     return render(request, 'user/profile.html', {'form': form, 'user': user})
+
+
+
+@login_required
+def request_2fa_approval(request):
+    # Logic for requesting 2FA approval
+    messages.success(request, 'Your request for 2FA approval has been submitted.')
+    return redirect('profile')
