@@ -37,10 +37,6 @@ def profile(request):
     return render(request, 'user/profile.html')
 
 
-
-
-
-
 from .forms import CustomAuthenticationForm
 from django.contrib.auth import authenticate
 def custom_login(request):
@@ -291,17 +287,101 @@ def custom_password_reset_view(request):
 
 
 
-from django.contrib.auth import views as auth_views
-from django.urls import path
+# from django.contrib.auth import views as auth_views
+# from django.urls import path
 
-class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
-    template_name = 'registration/password_reset_done.html'
+# class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+#     template_name = 'registration/password_reset_done.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['site_title'] = 'Your Site Title'  # Add site_title to the context
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['site_title'] = 'Your Site Title'  # Add site_title to the context
+#         return context
 
-urlpatterns = [
-    path('password_reset/done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
-]
+# urlpatterns = [
+#     path('password_reset/done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
+# ]
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import ProfileForm
+from .models import CustomUser
+
+def profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            user = form.save()
+            if user.mobile_number and user.mobile_carrier:
+                messages.success(request, "Profile updated! 2FA can be enabled.")
+            else:
+                user.is_2fa_enabled = False  # Disable if not all info entered
+            user.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=user)
+    
+    return render(request, 'user/profile.html', {'form': form})
+
+def enable_2fa(request):
+    user = request.user
+    if user.mobile_number and user.mobile_carrier:
+        user.is_2fa_enabled = True
+        user.save()
+        # Simulate sending 2FA SMS here (Email-to-SMS logic)
+        messages.success(request, "2FA enabled and verification sent!")
+    else:
+        messages.error(request, "Please complete your profile to enable 2FA.")
+    return redirect('profile')
+
+def disable_2fa(request):
+    user = request.user
+    user.is_2fa_enabled = False
+    user.save()
+    messages.success(request, "2FA disabled.")
+    return redirect('profile')
+
+
+def send_2fa_code(user, code):
+    carrier_email_domains = {
+        "Verizon": "@vtext.com",
+        "AT&T": "@txt.att.net",
+        "T-Mobile": "@tmomail.net",
+        # Add more carriers
+    }
+
+    if user.mobile_carrier in carrier_email_domains:
+        sms_address = f"{user.mobile_number}{carrier_email_domains[user.mobile_carrier]}"
+        subject = 'Your 2FA Code'
+        message = f'Your two-factor authentication code is {code}.'
+        send_mail(subject, message, 'your-email@example.com', [sms_address])
+
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import ProfileForm
+
+@login_required
+def profile_view(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated.')
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=user)
+
+    return render(request, 'user/profile.html', {'form': form, 'user': user})
+
+
+

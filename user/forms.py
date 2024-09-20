@@ -2,6 +2,15 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
 
+CARRIER_CHOICES = [
+    ('att', 'AT&T'),
+    ('verizon', 'Verizon'),
+    ('tmobile', 'T-Mobile'),
+    ('sprint', 'Sprint'),
+    # Add more carriers as needed
+]
+
+
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -26,3 +35,19 @@ class CustomAuthenticationForm(AuthenticationForm):
         # Do not raise ValidationError here for inactive users
         # Let the view handle it
         pass
+
+
+
+from django import forms
+from .models import CustomUser
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'mobile_number', 'mobile_carrier', 'mobile_authenticated']
+
+    def clean_mobile_number(self):
+        mobile_number = self.cleaned_data.get('mobile_number')
+        if not mobile_number:
+            raise forms.ValidationError("Mobile number is required for enabling 2FA.")
+        return mobile_number

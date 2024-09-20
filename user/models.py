@@ -1,3 +1,5 @@
+# /Users/2021sam/apps/authuser/user/models.py
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -30,12 +32,26 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
+CARRIER_CHOICES = [
+    ('att', 'AT&T'),
+    ('verizon', 'Verizon'),
+    ('tmobile', 'T-Mobile'),
+    ('sprint', 'Sprint'),
+    # Add more carriers as needed
+]
+
 # Custom User Model
 class CustomUser(AbstractUser):
     username = None  # Remove the default username field
     email = models.EmailField(unique=True)  # Set email field to be unique and required
-
+    mobile_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
+    mobile_carrier = models.CharField(max_length=10, choices=CARRIER_CHOICES, null=True, blank=True)
+    mobile_authenticated = models.BooleanField(default=False)  # For 2FA status
+    
     USERNAME_FIELD = 'email'  # Use email as the unique identifier for the user
     REQUIRED_FIELDS = []  # No additional required fields
 
     objects = CustomUserManager()  # Use CustomUserManager to manage users
+
+    def __str__(self):
+        return self.email
