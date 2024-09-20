@@ -313,16 +313,18 @@ def profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=user)
         if form.is_valid():
+            if form.cleaned_data['mobile_number'] != user.mobile_number or form.cleaned_data['mobile_carrier'] != user.mobile_carrier:
+                # Reset 2FA if mobile number or carrier is changed
+                user.mobile_authenticated = False
+                user.is_2fa_enabled = False
+                messages.warning(request, "2FA has been disabled due to changes in your mobile number or carrier. Please re-enable 2FA.")
+            
             user = form.save()
-            if user.mobile_number and user.mobile_carrier:
-                messages.success(request, "Profile updated! 2FA can be enabled.")
-            else:
-                user.is_2fa_enabled = False  # Disable if not all info entered
             user.save()
             return redirect('profile')
     else:
         form = ProfileForm(instance=user)
-    
+
     return render(request, 'user/profile.html', {'form': form})
 
 def enable_2fa(request):
