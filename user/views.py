@@ -399,43 +399,44 @@ from django.contrib import messages
 from .models import CustomUser
 import random
 
+
 @login_required
 def request_2fa_approval(request):
     user = request.user
-    logger.info('******************** 0')
-    # Ensure user has provided mobile number and carrier
-    if user.mobile_number and user.mobile_carrier:
-        # Generate a random 2FA code
-        code = random.randint(100000, 999999)
-        logger.info('******************** 1')
-        # Logic to handle 2FA request, simulate sending a 2FA code via SMS
-        send_2fa_code(user, code)
-        logger.info('******************** 2')
-        user.mobile_authenticated = True  # This can be used for the 2FA authenticated status
-        user.save()
+    logger.info('Requesting 2FA approval')
 
-        messages.success(request, f"2FA approval requested. A code has been sent to {user.mobile_number}.")
+    if user.mobile_number and user.mobile_carrier:
+        code = random.randint(100000, 999999)
+        send_2fa_code(user, code)  # Send 2FA code via SMS
+
+        # user.two_factor_code = code  # Save the code for later verification
+        # user.save()
+
+        request.session['two_factor_code'] = str(code)  # Store in session
+
+        messages.success(request, f"A code has been sent to {user.mobile_number}.")
+        return redirect('verify_2fa')  # Redirect to the 2FA verification page
     else:
-        messages.error(request, "Please complete your profile with a mobile number and carrier to request 2FA approval.")
+        messages.error(request, "Please provide a valid mobile number and carrier.")
     
     return redirect('profile')
+
 
 
 @login_required
 def verify_2fa_code(request):
     if request.method == 'POST':
-        form = TwoFactorForm(request.POST)
-        if form.is_valid():
-            code = form.cleaned_data['code']
-            # Compare with the 2FA code (this needs to be fetched or stored in session)
-            if code == request.user.two_factor_code:  # Adjust the logic
-                request.user.mobile_authenticated = True
-                request.user.save()
-                messages.success(request, '2FA setup successfully!')
-                return redirect('profile')
-            else:
-                messages.error(request, 'Invalid 2FA code.')
-    else:
-        form = TwoFactorForm()
+        entered_code = request.POST.get('two_factor_code')
+        session_code = request.session.get('two_factor_code')
 
-    return render(request, 'user/verify_2fa.html', {'form': form})
+        if entered_code == session_code:
+            request.user.mobile_authenticated = True
+            request.user.save()
+            del request.session['two_factor_code']  # Clear the session
+            messages.success(request, "Two-factor authentication successful!")
+            return redirect('profile')
+        else:
+            messages.error(request, "Invalid 2FA code. Please try again.")
+            return redirect('verify_2fa')
+
+    return render(request, 'user/verify_2fa.html')

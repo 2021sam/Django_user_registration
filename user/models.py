@@ -47,6 +47,7 @@ class CustomUser(AbstractUser):
     mobile_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
     mobile_carrier = models.CharField(max_length=10, choices=CARRIER_CHOICES, null=True, blank=True)
     mobile_authenticated = models.BooleanField(default=False)  # For 2FA status
+    # two_factor_code = models.CharField(max_length=6, null=True, blank=True)
     
     USERNAME_FIELD = 'email'  # Use email as the unique identifier for the user
     REQUIRED_FIELDS = []  # No additional required fields
