@@ -1,3 +1,4 @@
+<!-- authuser/templates/base.html -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -10,10 +11,12 @@
 <body>
     <header>
         <nav>
-
             <ul>
                 {% if user.is_authenticated %}
-                    <!-- Show profile icon with user name -->
+                <li>
+                    <a href="{% url 'home' %}">
+                        <img src="{% static 'images/home-icon.png' %}" alt="Home" width="30" height="30">Home</a>
+                    </li>
                     <li>
                         <a href="{% url 'profile' %}">
                             <img src="{% static 'images/profile-icon.png' %}" alt="Profile" width="30" height="30">
@@ -28,7 +31,6 @@
                     <li><a href="{% url 'register' %}">Register</a></li>
                 {% endif %}
             </ul>
-
         </nav>
     </header>
 
