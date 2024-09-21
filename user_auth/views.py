@@ -1,4 +1,4 @@
-# /Users/2021sam/apps/authuser/user/views.py
+# /Users/2021sam/apps/authuser/user_auth/views.py
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -365,7 +365,7 @@ def profile_view(request):
     else:
         form = ProfileForm(instance=user)
 
-    return render(request, 'user/profile.html', {'form': form, 'user': user})
+    return render(request, 'user-auth/profile.html', {'form': form, 'user': user})
 
 
 from django.contrib.auth.decorators import login_required
