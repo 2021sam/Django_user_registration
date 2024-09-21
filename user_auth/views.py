@@ -32,7 +32,7 @@ def home(request):
 
 @login_required
 def profile(request):
-    return render(request, 'user/profile.html')
+    return render(request, 'user-auth/profile.html')
 
 
 from .forms import CustomAuthenticationForm
@@ -88,7 +88,7 @@ def send_verification_email(request, user):
 
     # Build the absolute URL for email verification
     verification_url = request.build_absolute_uri(
-        f"/user/activate/{uid}/{token}/"
+        f"/user-auth/activate/{uid}/{token}/"
     )
 
     # Render the email using the new HTML template
@@ -175,7 +175,7 @@ def sign_up(request):
     else:
         form = RegisterForm()
 
-    return render(request, 'user/register.html', {'form': form})
+    return render(request, 'user-auth/register.html', {'form': form})
 
 from django.contrib.auth import get_backends
 def activate(request, uidb64, token):
@@ -270,7 +270,7 @@ def delete_account(request):
         messages.success(request, 'Your account has been deleted successfully.')
         return redirect('home')  # Redirect to home or any other page after deletion
 
-    return render(request, 'user/delete_account.html')
+    return render(request, 'user-auth/delete_account.html')
 
 
 # Add this to your views.py (or ensure you are using a context processor that provides it)
@@ -282,25 +282,6 @@ def custom_password_reset_view(request):
     }
     # return render(request, 'registration/password_reset_form.html', context)
     return render(request, 'password_reset_form.html', {'name': 'YourName'})
-
-
-
-# from django.contrib.auth import views as auth_views
-# from django.urls import path
-
-# class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
-#     template_name = 'registration/password_reset_done.html'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['site_title'] = 'Your Site Title'  # Add site_title to the context
-#         return context
-
-# urlpatterns = [
-#     path('password_reset/done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
-# ]
-
-
 
 
 from django.shortcuts import render, redirect
@@ -325,7 +306,7 @@ def profile(request):
     else:
         form = ProfileForm(instance=user)
 
-    return render(request, 'user/profile.html', {'form': form})
+    return render(request, 'user-auth/profile.html', {'form': form})
 
 def enable_2fa(request):
     user = request.user
@@ -387,14 +368,6 @@ def profile_view(request):
     return render(request, 'user/profile.html', {'form': form, 'user': user})
 
 
-
-# @login_required
-# def request_2fa_approval(request):
-#     # Logic for requesting 2FA approval
-#     messages.success(request, 'Your request for 2FA approval has been submitted.')
-#     return redirect('profile')
-
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -441,4 +414,4 @@ def verify_2fa_code(request):
             messages.error(request, "Invalid 2FA code. Please try again.")
             return redirect('verify_2fa')
 
-    return render(request, 'user/verify_2fa.html')
+    return render(request, 'user-auth/verify_2fa.html')
