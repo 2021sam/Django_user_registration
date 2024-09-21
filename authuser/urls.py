@@ -2,13 +2,13 @@
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.urls import path, include
-from user.views import home, custom_login, custom_logout
-from user import views as user_views
+from user_auth.views import home, custom_login, custom_logout
+from user_auth import views as user_views
 
 urlpatterns = [
     path('', home, name='home'),  # Root URL points to the home view
     path('admin/', admin.site.urls),
-    path('user/', include('user.urls')),  # Include user app URLs
+    path('user/', include('user_auth.urls')),  # Include user app URLs
     path('accounts/login/', custom_login, name='login'),  # Override the default login view
     path('accounts/', include('django.contrib.auth.urls')),  # Include Django's built-in authentication views for the other routes
         # Logout URL

@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'user'
+    'user_auth'
 ]
 
 MIDDLEWARE = [
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'user.middleware.EmailVerificationMiddleware',  # Add the custom middleware
+    'user_auth.middleware.EmailVerificationMiddleware',  # Add the custom middleware
 ]
 
 
@@ -122,7 +122,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# STATIC_URL = 'static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']  # This points to the global static folder
 
@@ -130,18 +129,15 @@ STATICFILES_DIRS = [BASE_DIR / 'static']  # This points to the global static fol
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'user.CustomUser'
-# settings.py
-# AUTHENTICATION_BACKENDS = ['user.backends.EmailBackend']
+AUTH_USER_MODEL = 'user_auth.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
-    'user.backends.EmailBackend',  # Custom email backend
+    'user_auth.backends.EmailBackend',  # Custom email backend
     'django.contrib.auth.backends.ModelBackend',  # Default model backend
 ]
 
 
 LOGIN_REDIRECT_URL = '/'
-# LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
 LOGOUT_REDIRECT_URL = '/'  # Where to redirect after logout
 
 
@@ -154,43 +150,32 @@ EMAIL_HOST_USER = '2020sentinel@gmail.com'
 EMAIL_HOST_PASSWORD = 'sfeg uyva stmt pejo'
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-        'user': {  # Enable logging for the 'user' app
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#         'user': {  # Enable logging for the 'user' app
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
 
 
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Store sessions in the database
 SESSION_COOKIE_AGE = 1209600  # 2 weeks (default)
 SESSION_SAVE_EVERY_REQUEST = True  # Save the session to the database on every request
-
-
-# INSTALLED_APPS = [
-#     ...
-#     'corsheaders',
-# ]
-
-# MIDDLEWARE = [
-#     'corsheaders.middleware.CorsMiddleware',
-#     ...
-# ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",  # Or wherever your frontend is hosted

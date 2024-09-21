@@ -10,7 +10,7 @@ urlpatterns = [
     path('resend-verification/', resend_verification_email, name='resend_verification'),  # Resend verification email
     
     # Custom login view
-    path('login/', custom_login, name='login'),  
+    path('login/', custom_login, name='login'),
     
     # Verification pages
     path('verify-account/', verify_account, name='verify_account'),  
@@ -39,5 +39,4 @@ urlpatterns = [
 
     path('request_2fa_approval/', request_2fa_approval, name='request_2fa_approval'),
     path('verify-2fa/', verify_2fa_code, name='verify_2fa'),
-
 ]
